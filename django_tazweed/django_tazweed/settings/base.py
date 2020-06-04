@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/2.1/ref/settings/
 """
 
 import os
+import mongoengine
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -39,6 +40,11 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django_extensions',
+    'rest_framework_mongoengine',
+    "graphene_django",
+    "graphene_mongo",
+    "tazweed_app",
 ]
 
 MIDDLEWARE = [
@@ -75,12 +81,6 @@ WSGI_APPLICATION = 'django_tazweed.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/2.1/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-    }
-}
 
 
 # Password validation
@@ -125,3 +125,23 @@ STATICFILES_DIRS = [
     os.path.join(PROJECT_DIR, "static"),
 ]
 STATIC_ROOT = os.path.join(PROJECT_DIR, 'staticfiles')
+
+
+# MONGO DB connection\
+_MONGODB_USER = ""
+_MONGODB_PASSWD = ""
+_MONGODB_HOST = "localhost"
+_MONGODB_NAME = "tazweedDb"
+_MONGODB_PORT = 27017
+_MONGODB_DATABASE_HOST = "mongodb://%s:%s@%s/%s" % (
+    _MONGODB_USER,
+    _MONGODB_PASSWD,
+    _MONGODB_HOST,
+    _MONGODB_NAME,
+)
+
+mongoengine.connect(_MONGODB_NAME, host=_MONGODB_HOST, port=_MONGODB_PORT)
+
+
+# Graphene schema
+GRAPHENE = {"SCHEMA": "tazweed_app.schema.schema"}  # Where your Graphene schema lives
