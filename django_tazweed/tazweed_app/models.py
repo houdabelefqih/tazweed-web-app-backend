@@ -14,6 +14,7 @@ from mongoengine.fields import (
 )
 
 class Shop(Document):
+    _id = ObjectIdField()
     meta = {"collection": "shop"}
     name = StringField()
     address = StringField() 
@@ -34,6 +35,7 @@ class Slot(EmbeddedDocument):
 
 
 class Appointment(Document):
+    _id = ObjectIdField()
     STATUS_CHOICES= (('approved', 'approved'), ('denied', 'denied'),('pending', 'pending'),)
     meta = {"collection": "appointment"}
     slot= EmbeddedDocumentField(Slot)
@@ -42,6 +44,7 @@ class Appointment(Document):
     status = StringField(choices =STATUS_CHOICES,default='pending')
 
 class User(Document):
+    _id = ObjectIdField()
     meta = {"collection": "user", 'allow_inheritance': True, 'abstract': True}
     name = StringField(max_length=200)
     username = StringField(max_length=100)
