@@ -10,14 +10,11 @@ class Query(graphene.ObjectType):
     seller = Node.Field(SellerType)
     client = Node.Field(ClientType)
     shop = Node.Field(ShopType)
-    slot = Node.Field(SlotType)
-    appointment =Node.Field(AppointmentType)
+
     users = MongoengineConnectionField(UserType)
     sellers = MongoengineConnectionField(SellerType)
     clients = MongoengineConnectionField(ClientType)
     shops = MongoengineConnectionField(ShopType)
-    slots = MongoengineConnectionField(SlotType)
-    appointments = MongoengineConnectionField(AppointmentType)
 
 
 
