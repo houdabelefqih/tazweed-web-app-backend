@@ -25,7 +25,7 @@ class Shop(Document):
 
 class Slot(EmbeddedDocument):
     meta = {"collection": "slot"}
-    available = BooleanField(default=False)
+    available = BooleanField(default=True)
     datetime = DateTimeField()
     duration = IntField(min_value= 1, max_value=4)
 
@@ -33,12 +33,13 @@ class Slot(EmbeddedDocument):
         return self.datetime
 
 
-class Appointment(EmbeddedDocument):
+class Appointment(Document):
+    STATUS_CHOICES= (('approved', 'approved'), ('denied', 'denied'),('pending', 'pending'),)
     meta = {"collection": "appointment"}
-    seller_id = ObjectIdField()
-    client_id = ObjectIdField()
-    slot =  EmbeddedDocumentField(Slot)
-    approved = BooleanField(default=False)
+    slot= EmbeddedDocumentField(Slot)
+    client= ReferenceField('Client')
+    seller= ReferenceField('Seller')
+    status = StringField(choices =STATUS_CHOICES,default='pending')
 
 class User(Document):
     meta = {"collection": "user", 'allow_inheritance': True, 'abstract': True}
@@ -55,10 +56,10 @@ class Seller(User):
     meta = {"collection": "seller",}
     shop = ReferenceField(Shop)
     available_slots =  ListField(EmbeddedDocumentField(Slot))
-    appointments = ListField(EmbeddedDocumentField(Appointment))
+    appointments = ListField(ReferenceField(Appointment), reverse_delete_rule=CASCADE)
 
 class Client(User):
     meta = {"collection": "client"}
-    reservations =  ListField(EmbeddedDocumentField(Appointment))
+    reservations = ListField(ReferenceField(Appointment), reverse_delete_rule=CASCADE)
 
 

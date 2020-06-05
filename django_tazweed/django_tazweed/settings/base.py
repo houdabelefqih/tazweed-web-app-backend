@@ -127,8 +127,8 @@ STATIC_ROOT = os.path.join(PROJECT_DIR, 'staticfiles')
 
 
 # MONGO DB connection\
-_MONGODB_USER = ""
-_MONGODB_PASSWD = ""
+_MONGODB_USER = "houda"
+_MONGODB_PASSWD = "pass"
 _MONGODB_HOST = "localhost"
 _MONGODB_NAME = "tazweedDb"
 _MONGODB_PORT = 27017

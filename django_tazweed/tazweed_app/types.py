@@ -1,6 +1,6 @@
 from graphene import relay
 from graphene_mongo import MongoengineObjectType
-from .models import User,Seller,Slot,Appointment,Client,Shop
+from .models import Seller,Slot,Appointment,Client,Shop
 
 class SellerType(MongoengineObjectType):
     class Meta:
@@ -10,12 +10,7 @@ class SellerType(MongoengineObjectType):
 class ClientType(MongoengineObjectType):
     class Meta:
         model = Client
-        interfaces = (relay.Node,)
-
-class UserType(MongoengineObjectType):
-    class Meta:
-        model = User
-        interfaces = (relay.Node,)       
+        interfaces = (relay.Node,) 
 
 class SlotType(MongoengineObjectType):
     class Meta:
