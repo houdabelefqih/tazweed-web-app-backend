@@ -55,6 +55,8 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'graphql_jwt.middleware.JSONWebTokenMiddleware',
+
 ]
 
 ROOT_URLCONF = 'django_tazweed.urls'
@@ -109,6 +111,11 @@ AUTH_PASSWORD_VALIDATORS = [
 
 AUTH_USER_MODEL = 'profiles.User'
 
+AUTHENTICATION_BACKENDS = [
+    'graphql_jwt.backends.JSONWebTokenBackend',
+    'django.contrib.auth.backends.ModelBackend',
+]
+
 # Internationalization
 # https://docs.djangoproject.com/en/2.1/topics/i18n/
 
@@ -135,4 +142,4 @@ STATIC_ROOT = os.path.join(PROJECT_DIR, 'staticfiles')
 
 
 # Graphene schema
-GRAPHENE = {"SCHEMA": "django_tazweed.schema.schema"}  # Where your Graphene schema lives
+GRAPHENE = {"SCHEMA": "django_tazweed.schema.schema", }
