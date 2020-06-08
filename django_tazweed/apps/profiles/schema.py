@@ -1,44 +1,21 @@
 from graphql import GraphQLError
 import graphql_jwt
-from .models import User, Client, Seller
 import graphene
 import django_filters
 from graphene_django import DjangoObjectType
 from graphene_django.filter import DjangoFilterConnectionField
-from apps.appointments.schema import (
-    SlotNode,
-    AppointmentNode,
-    SlotFilter,
-    AppointmentFilter,
-)
 
+from apps.appointments.schema import SlotNode, AppointmentNode
+from apps.appointments.filters import SlotFilter, AppointmentFilter
 
-class UserFilter(django_filters.FilterSet):
-    class Meta:
-        model = User
-        fields = {
-            "first_name": ["iexact", "icontains", "istartswith"],
-            "last_name": ["iexact", "icontains", "istartswith"],
-            "is_seller": ["iexact"],
-        }
+from .models import User, Client, Seller
+from .filters import UserFilter, ClientFilter, SellerFilter
 
 
 class UserNode(DjangoObjectType):
     class Meta:
         model = User
         interfaces = (graphene.relay.Node,)
-
-
-class SellerFilter(django_filters.FilterSet):
-    class Meta:
-        model = Seller
-        fields = {
-            "user__first_name": ["iexact", "icontains", "istartswith"],
-            "user__last_name": ["iexact", "icontains", "istartswith"],
-            "user__username": ["iexact", "icontains", "istartswith"],
-            "user__email": ["iexact", "icontains", "istartswith"],
-            "shop": ["exact", "icontains", "istartswith"],
-        }
 
 
 class SellerNode(DjangoObjectType):
@@ -51,15 +28,6 @@ class SellerNode(DjangoObjectType):
         model = Seller
         interfaces = (graphene.relay.Node,)
 
-class ClientFilter(django_filters.FilterSet):
-    class Meta:
-        model = Client
-        fields = {
-            "user__first_name": ["iexact", "icontains", "istartswith"],
-            "user__last_name": ["iexact", "icontains", "istartswith"],
-            "user__username": ["iexact", "icontains", "istartswith"],
-            "user__email": ["iexact", "icontains", "istartswith"],
-        }
 
 class ClientNode(DjangoObjectType):
     reservations = DjangoFilterConnectionField(
