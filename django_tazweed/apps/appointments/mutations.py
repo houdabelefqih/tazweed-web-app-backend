@@ -39,8 +39,39 @@ class SlotMutation(graphene.relay.ClientIDMutation):
 
             return SlotMutation(slot=slot)
 
+class SlotDeleteMutation(graphene.relay.ClientIDMutation):
 
-class AppointmentMutation(graphene.relay.ClientIDMutation):
+    deleted= graphene.Boolean()
+
+    class Input:
+       slot_uuid = graphene.UUID()
+
+    @classmethod
+    def mutate_and_get_payload(cls, root, info, **input):
+        user = info.context.user 
+
+        #check if user is logged in
+        if user.is_anonymous:
+            raise Exception('Not logged in!')
+
+        #check if appointment exists
+        try:
+            uuid = input.get('slot_uuid')
+            slot= Slot.objects.get(uuid=uuid)
+    
+        except Slot.DoesNotExist:
+            raise GraphQLError("This uuid does not exist.")
+        print(user.username)
+        #check if the user has permissions to delete the appointment
+        if user.id != slot.seller.user.id:
+            raise GraphQLError("You do not have permissions to execute this action." + str(user) + " " + str(slot.seller.user ))
+        
+        slot.delete()
+
+        return SlotDeleteMutation(deleted=True)
+
+
+class AppointmentCreateMutation(graphene.relay.ClientIDMutation):
     appointment= graphene.Field(AppointmentNode)
 
     class Input:
@@ -77,7 +108,7 @@ class AppointmentMutation(graphene.relay.ClientIDMutation):
         slot.available= False
         slot.save()
 
-        return AppointmentMutation(appointment=appointment)
+        return AppointmentCreateMutation(appointment=appointment)
 
 class AppointmentUpdateMutation(graphene.relay.ClientIDMutation):
     appointment= graphene.Field(AppointmentNode)
@@ -94,7 +125,7 @@ class AppointmentUpdateMutation(graphene.relay.ClientIDMutation):
             raise Exception('Not logged in!')
 
         elif not user.is_seller:
-            raise Exception("You do not have permissions to execute this action.")
+            raise GraphQLError("You do not have permissions to execute this action.")
 
         else:
             try:
@@ -103,16 +134,52 @@ class AppointmentUpdateMutation(graphene.relay.ClientIDMutation):
             except Appointment.DoesNotExist:
                 raise GraphQLError("This uuid does not exist.")
             
-            if appointment.client != user:
-                raise Exception("You do not have permissions to execute this action.")
+            # if appointment.seller != user:
+            #     raise GraphQLError("You do not have permissions to execute this action.")
 
             appointment.status = input.get('status') 
             appointment.save()
 
-            return AppointmentMutation(appointment=appointment)
+            return AppointmentUpdateMutation(appointment=appointment)
 
+class AppointmentDeleteMutation(graphene.relay.ClientIDMutation):
+
+    deleted= graphene.Boolean()
+
+    class Input:
+        appointment_uuid = graphene.UUID()
+
+    @classmethod
+    def mutate_and_get_payload(cls, root, info, **input):
+        user = info.context.user 
+
+        #check if user is logged in
+        if user.is_anonymous:
+            raise Exception('Not logged in!')
+
+        #check if appointment exists
+        try:
+            uuid = input.get('appointment_uuid')
+            appointment= Appointment.objects.get(uuid=uuid)
+    
+        except Appointment.DoesNotExist:
+            raise GraphQLError("This uuid does not exist.")
+        
+        #check if the user has permissions to delete the appointment
+        if user.id != appointment.seller.user.id and user.id != appointment.client.user.id:
+            raise GraphQLError("You do not have permissions to execute this action.")
+        
+        #make the corresponding slot available again
+        appointment.slot.available=True
+            
+        appointment.delete()
+
+        return AppointmentDeleteMutation(deleted=True)
 
 class Mutation(graphene.AbstractType):
     create_slot= SlotMutation.Field()
-    create_appointment = AppointmentMutation.Field()
+    delete_slot = SlotDeleteMutation.Field()
+
+    create_appointment = AppointmentCreateMutation.Field()
     update_appointment = AppointmentUpdateMutation.Field()
+    delete_appointment = AppointmentDeleteMutation.Field()
