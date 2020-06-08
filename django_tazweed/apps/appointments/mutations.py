@@ -39,7 +39,7 @@ class AppointmentMutation(graphene.relay.ClientIDMutation):
     appointment= graphene.Field(AppointmentNode)
 
     class Input:
-        slot_id = graphene.ID(required=True)
+        slot_uuid = graphene.UUID(required=True)
 
     @classmethod
     def mutate_and_get_payload(cls, root, info, **input):
@@ -52,7 +52,10 @@ class AppointmentMutation(graphene.relay.ClientIDMutation):
         client = Client.objects.first()
 
         #get the requested slot from its id
-        slot= Slot.objects.get(pk=input.get('slot_id'))
+        slot= Slot.objects.get(uuid=input.get('slot_uuid'))
+
+        if not slot.available:
+            raise Exception('Slot is not available!')
 
         #get the seller object
         seller= slot.seller
@@ -71,7 +74,7 @@ class AppointmentUpdateMutation(graphene.relay.ClientIDMutation):
     appointment= graphene.Field(AppointmentNode)
 
     class Input:
-        appointment_id = graphene.ID()
+        appointment_uuid = graphene.UUID()
         status = graphene.String(required=True)
 
     @classmethod
@@ -81,9 +84,7 @@ class AppointmentUpdateMutation(graphene.relay.ClientIDMutation):
         if user.is_anonymous:
             raise Exception('Not logged in!')
 
-        print(user.is_seller)
-
-        appointment= Appointment.objects.get(pk=input.get('appointment_id'))
+        appointment= Appointment.objects.get(uuid=input.get('appointment_uuid'))
 
         appointment.status = input.get('status') 
         appointment.save()
