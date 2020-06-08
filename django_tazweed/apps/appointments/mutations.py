@@ -1,4 +1,5 @@
 from django.db import models
+from graphql import GraphQLError
 import graphene
 from apps.profiles.models import Client, Seller
 from .models import Slot, Appointment
@@ -19,20 +20,24 @@ class SlotMutation(graphene.relay.ClientIDMutation):
 
         if user.is_anonymous:
             raise Exception('Not logged in!')
+
+        elif not user.is_seller:
+            raise Exception('You do not have permissions to add slots.')
         
-        seller = Seller.objects.get(user=user)
+        else:
+            seller = Seller.objects.get(user=user)
 
-        slot = Slot(
-            date=input.get('date'),
-            start=input.get('start'),
-            end=input.get('end'),
-            seller=seller,
-            available=True,
-        )
+            slot = Slot(
+                date=input.get('date'),
+                start=input.get('start'),
+                end=input.get('end'),
+                seller=seller,
+                available=True,
+            )
 
-        slot.save()
+            slot.save()
 
-        return SlotMutation(slot=slot)
+            return SlotMutation(slot=slot)
 
 
 class AppointmentMutation(graphene.relay.ClientIDMutation):
@@ -49,11 +54,15 @@ class AppointmentMutation(graphene.relay.ClientIDMutation):
             raise Exception('Not logged in!')
 
         #get the logged in client
-        client = Client.objects.first()
+        client = Client.objects.get(user=user)
 
-        #get the requested slot from its id
-        slot= Slot.objects.get(uuid=input.get('slot_uuid'))
-
+        #get the requested slot by uuid
+        try:
+            slot= Slot.objects.get(uuid=input.get('slot_uuid'))
+        
+        except Appointment.DoesNotExist:
+            raise GraphQLError("This uuid does not exist.")
+        
         if not slot.available:
             raise Exception('Slot is not available!')
 
@@ -84,12 +93,23 @@ class AppointmentUpdateMutation(graphene.relay.ClientIDMutation):
         if user.is_anonymous:
             raise Exception('Not logged in!')
 
-        appointment= Appointment.objects.get(uuid=input.get('appointment_uuid'))
+        elif not user.is_seller:
+            raise Exception("You do not have permissions to execute this action.")
 
-        appointment.status = input.get('status') 
-        appointment.save()
+        else:
+            try:
+                appointment= Appointment.objects.get(uuid=input.get('appointment_uuid'))
+        
+            except Appointment.DoesNotExist:
+                raise GraphQLError("This uuid does not exist.")
+            
+            if appointment.client != user:
+                raise Exception("You do not have permissions to execute this action.")
 
-        return AppointmentMutation(appointment=appointment)
+            appointment.status = input.get('status') 
+            appointment.save()
+
+            return AppointmentMutation(appointment=appointment)
 
 
 class Mutation(graphene.AbstractType):
