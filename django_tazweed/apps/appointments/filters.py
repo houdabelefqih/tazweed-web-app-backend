@@ -1,12 +1,19 @@
 from graphql import GraphQLError
 import graphene
 import django_filters
+from django_filters import OrderingFilter
 from graphene_django import DjangoObjectType
 from graphene_django.filter import DjangoFilterConnectionField
 
 from .models import Slot, Appointment
 
+
 class SlotFilter(django_filters.FilterSet):
+
+    order_by = OrderingFilter(
+            fields=(("date", "date"), ("start", "start"), ("end", "end"))
+        )
+
     class Meta:
         model = Slot
         fields = {
@@ -32,7 +39,6 @@ class SlotFilter(django_filters.FilterSet):
                 "day__gt",
                 "day__gte",
             ],
-
             "start": [
                 "exact",
                 "lt",
@@ -43,8 +49,8 @@ class SlotFilter(django_filters.FilterSet):
                 "hour__lt",
                 "hour__lte",
                 "hour__gt",
-                "hour__gte",],
-            
+                "hour__gte",
+            ],
             "end": [
                 "exact",
                 "lt",
@@ -55,13 +61,24 @@ class SlotFilter(django_filters.FilterSet):
                 "hour__lt",
                 "hour__lte",
                 "hour__gt",
-                "hour__gte",],
-
-            "available": ["exact",]
+                "hour__gte",
+            ],
+            "available": ["exact",],
         }
+
+        
 
 
 class AppointmentFilter(django_filters.FilterSet):
+
+    order_by = OrderingFilter(
+            fields=(
+                ("slot__date", "slot__date"),
+                ("slot__start", "slot__start"),
+                ("slot__end", "slot__end"),
+            )
+        )
+
     class Meta:
         model = Appointment
         fields = {
@@ -88,7 +105,6 @@ class AppointmentFilter(django_filters.FilterSet):
                 "day__gt",
                 "day__gte",
             ],
-
             "slot__start": [
                 "exact",
                 "lt",
@@ -99,8 +115,8 @@ class AppointmentFilter(django_filters.FilterSet):
                 "hour__lt",
                 "hour__lte",
                 "hour__gt",
-                "hour__gte",],
-
+                "hour__gte",
+            ],
             "slot__end": [
                 "exact",
                 "lt",
@@ -111,7 +127,8 @@ class AppointmentFilter(django_filters.FilterSet):
                 "hour__lt",
                 "hour__lte",
                 "hour__gt",
-                "hour__gte",],
+                "hour__gte",
+            ],
         }
 
-
+       

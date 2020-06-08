@@ -2,12 +2,24 @@ from graphql import GraphQLError
 import graphql_jwt
 import graphene
 import django_filters
+from django_filters import OrderingFilter
+
 from graphene_django import DjangoObjectType
 from graphene_django.filter import DjangoFilterConnectionField
 
 from .models import User, Client, Seller
 
+
 class UserFilter(django_filters.FilterSet):
+
+    order_by = OrderingFilter(
+        fields=(
+            ("first_name", "first_name"),
+            ("last_name", "last_name"),
+            ("username", "username"),
+        )
+    )
+
     class Meta:
         model = User
         fields = {
@@ -18,6 +30,15 @@ class UserFilter(django_filters.FilterSet):
 
 
 class SellerFilter(django_filters.FilterSet):
+
+    order_by = OrderingFilter(
+        fields=(
+            ("user__first_name", "user__first_name"),
+            ("user__last_name", "user__last_name"),
+            ("user__username", "user__username"),
+            ("shop", "shop")
+        )
+    )
     class Meta:
         model = Seller
         fields = {
@@ -30,6 +51,15 @@ class SellerFilter(django_filters.FilterSet):
 
 
 class ClientFilter(django_filters.FilterSet):
+
+    order_by = OrderingFilter(
+    fields=(
+        ("user__first_name", "user__first_name"),
+        ("user__last_name", "user__last_name"),
+        ("user__username", "user__username"),
+    )
+    )
+
     class Meta:
         model = Client
         fields = {
@@ -38,4 +68,3 @@ class ClientFilter(django_filters.FilterSet):
             "user__username": ["iexact", "icontains", "istartswith"],
             "user__email": ["iexact", "icontains", "istartswith"],
         }
-
