@@ -32,12 +32,12 @@ class UserFilter(django_filters.FilterSet):
 class SellerFilter(django_filters.FilterSet):
 
     order_by = OrderingFilter(
-        fields=(
+        fields=[
             ("user__first_name", "user__first_name"),
             ("user__last_name", "user__last_name"),
             ("user__username", "user__username"),
             ("shop", "shop")
-        )
+        ]
     )
     class Meta:
         model = Seller
@@ -53,11 +53,11 @@ class SellerFilter(django_filters.FilterSet):
 class ClientFilter(django_filters.FilterSet):
 
     order_by = OrderingFilter(
-    fields=(
+    fields=[
         ("user__first_name", "user__first_name"),
         ("user__last_name", "user__last_name"),
         ("user__username", "user__username"),
-    )
+    ]
     )
 
     class Meta:

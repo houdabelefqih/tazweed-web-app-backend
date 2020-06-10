@@ -12,6 +12,9 @@ class Slot(models.Model):
     available = models.BooleanField(default=True)
     seller = models.ForeignKey(Seller, related_name="slots", on_delete=models.CASCADE)
 
+    class Meta:
+        ordering = ['date', 'start', 'end']
+
     def __str__(self):
         return str(self.date) + '_'+ str(self.start) + '_' +str(self.seller)
         
@@ -27,6 +30,9 @@ class Appointment(models.Model):
     seller = models.ForeignKey(Seller, related_name="appointments", on_delete=models.CASCADE)
     client = models.ForeignKey(Client, related_name="reservations", on_delete=models.CASCADE)
     status = models.CharField(max_length=30,choices=STATUS_CHOICES, default="pending")
+
+    class Meta:
+        ordering = ['slot__date', 'slot__start', 'slot__end']
 
     def __str__(self):
         return str(self.slot) + '_'+ str(self.client)

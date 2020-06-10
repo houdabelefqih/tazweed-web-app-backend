@@ -11,7 +11,7 @@ from .models import Slot, Appointment
 class SlotFilter(django_filters.FilterSet):
 
     order_by = OrderingFilter(
-            fields=(("date", "date"), ("start", "start"), ("end", "end"))
+            fields=[("date", "date"), ("start", "start"), ("end", "end")]
         )
 
     class Meta:

@@ -18,6 +18,7 @@ class UserNode(DjangoObjectType):
         interfaces = (graphene.relay.Node,)
 
 
+
 class SellerNode(DjangoObjectType):
     slots = DjangoFilterConnectionField(SlotNode, filterset_class=SlotFilter)
     appointments = DjangoFilterConnectionField(
