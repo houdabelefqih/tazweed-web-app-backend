@@ -25,6 +25,16 @@ class Query(graphene.ObjectType):
     slot = graphene.relay.Node.Field(SlotNode)
     slots = DjangoFilterConnectionField(SlotNode, filterset_class=SlotFilter)
 
+   
+    # def resolve_slots(self, info, user):
+    #     user = info.context.user 
+
+    #     if user.is_anonymous:
+    #         raise GraphQLError('You are not logged in.')
+
+    #     return Slot.objects.filter(seller__user=user).order_by('date', 'start', 'end')
+   
+
     appointment = graphene.relay.Node.Field(AppointmentNode)
     appointments = DjangoFilterConnectionField(
         AppointmentNode, filterset_class=AppointmentFilter

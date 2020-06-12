@@ -41,8 +41,18 @@ class ClientNode(DjangoObjectType):
 
 
 class Query(graphene.ObjectType):
-    user = graphene.relay.Node.Field(UserNode)
+    user = graphene.Field(UserNode)
     users = DjangoFilterConnectionField(UserNode, filterset_class=UserFilter)
+
+    def resolve_user(self,info, **kwargs):
+        user = info.context.user 
+
+        if user.is_anonymous:
+            raise Exception('Not logged in!')
+
+        return user
+            
+
 
     seller = graphene.relay.Node.Field(SellerNode)
     sellers = DjangoFilterConnectionField(SellerNode, filterset_class=SellerFilter)

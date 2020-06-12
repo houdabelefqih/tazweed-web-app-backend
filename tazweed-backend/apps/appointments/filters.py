@@ -17,6 +17,7 @@ class SlotFilter(django_filters.FilterSet):
     class Meta:
         model = Slot
         fields = {
+            "uuid": ["exact"],
             "date": [
                 "exact",
                 "lt",
@@ -82,6 +83,7 @@ class AppointmentFilter(django_filters.FilterSet):
     class Meta:
         model = Appointment
         fields = {
+            "uuid": ["exact"],
             "status": ["iexact"],
             "slot__date": [
                 "exact",

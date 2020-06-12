@@ -4,7 +4,7 @@ from django.db import models
 
 
 class User(AbstractUser):
-    is_seller = models.BooleanField(default=True)
+    is_seller = models.BooleanField(default=False)
     phone = models.CharField(max_length=30, blank=True)
 
 	

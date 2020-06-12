@@ -6,7 +6,7 @@ from .models import Slot, Appointment
 from .schema import SlotNode, AppointmentNode
 from datetime import datetime
 
-class SlotMutation(graphene.relay.ClientIDMutation):
+class CreateSlotMutation(graphene.relay.ClientIDMutation):
     slot = graphene.Field(SlotNode)
 
     class Input:
@@ -17,6 +17,8 @@ class SlotMutation(graphene.relay.ClientIDMutation):
     @classmethod
     def mutate_and_get_payload(cls, root, info, **input):
         user = info.context.user 
+
+        print(info.context.user)
 
         if user.is_anonymous:
             raise Exception('Not logged in!')
@@ -37,9 +39,9 @@ class SlotMutation(graphene.relay.ClientIDMutation):
 
             slot.save()
 
-            return SlotMutation(slot=slot)
+            return CreateSlotMutation(slot=slot)
 
-class SlotDeleteMutation(graphene.relay.ClientIDMutation):
+class DeleteSlotMutation(graphene.relay.ClientIDMutation):
 
     deleted= graphene.Boolean()
 
@@ -68,7 +70,7 @@ class SlotDeleteMutation(graphene.relay.ClientIDMutation):
         
         slot.delete()
 
-        return SlotDeleteMutation(deleted=True)
+        return DeleteSlotMutation(deleted=True)
 
 
 class AppointmentCreateMutation(graphene.relay.ClientIDMutation):
@@ -177,8 +179,8 @@ class AppointmentDeleteMutation(graphene.relay.ClientIDMutation):
         return AppointmentDeleteMutation(deleted=True)
 
 class Mutation(graphene.AbstractType):
-    create_slot= SlotMutation.Field()
-    delete_slot = SlotDeleteMutation.Field()
+    create_slot= CreateSlotMutation.Field()
+    delete_slot = DeleteSlotMutation.Field()
 
     create_appointment = AppointmentCreateMutation.Field()
     update_appointment = AppointmentUpdateMutation.Field()

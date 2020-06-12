@@ -3,6 +3,8 @@ import graphql_jwt
 import apps.profiles.schema
 import apps.appointments.schema
 import apps.appointments.mutations
+import apps.profiles.mutations
+
 
 
 class Query(apps.profiles.schema.Query, apps.appointments.schema.Query, graphene.ObjectType):
@@ -11,6 +13,7 @@ class Query(apps.profiles.schema.Query, apps.appointments.schema.Query, graphene
 
 class Mutation(
     apps.appointments.mutations.Mutation,
+    apps.profiles.mutations.Mutation,
     graphene.ObjectType,
 ):
     token_auth = graphql_jwt.ObtainJSONWebToken.Field()

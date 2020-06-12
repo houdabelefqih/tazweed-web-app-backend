@@ -23,6 +23,7 @@ class UserFilter(django_filters.FilterSet):
     class Meta:
         model = User
         fields = {
+            "id": ["exact"],
             "first_name": ["iexact", "icontains", "istartswith"],
             "last_name": ["iexact", "icontains", "istartswith"],
             "is_seller": ["iexact"],
@@ -42,6 +43,7 @@ class SellerFilter(django_filters.FilterSet):
     class Meta:
         model = Seller
         fields = {
+            "id": ["exact"],
             "user__first_name": ["iexact", "icontains", "istartswith"],
             "user__last_name": ["iexact", "icontains", "istartswith"],
             "user__username": ["iexact", "icontains", "istartswith"],
@@ -63,6 +65,7 @@ class ClientFilter(django_filters.FilterSet):
     class Meta:
         model = Client
         fields = {
+            "id": ["exact"],
             "user__first_name": ["iexact", "icontains", "istartswith"],
             "user__last_name": ["iexact", "icontains", "istartswith"],
             "user__username": ["iexact", "icontains", "istartswith"],
