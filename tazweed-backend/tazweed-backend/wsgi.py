@@ -1,5 +1,5 @@
 """
-WSGI config for django_tazweed project.
+WSGI config for tazweed-backend project.
 
 It exposes the WSGI callable as a module-level variable named ``application``.
 
@@ -11,6 +11,6 @@ import os
 
 from django.core.wsgi import get_wsgi_application
 
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'django_tazweed.settings.prod')
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'tazweed-backend.settings.prod')
 
 application = get_wsgi_application()

@@ -5,8 +5,8 @@ END=" \#\#\# \033[0m\n"
 
 HOST=0.0.0.0
 PORT=8080
-PYTHONPATH=django_tazweed
-DJANGO_SETTINGS=django_tazweed.settings.dev
+PYTHONPATH=tazweed-backend
+DJANGO_SETTINGS=tazweed-backend.settings.dev
 
 # django-command = django-admin $(1) $(HOST):$(PORT) --settings $(DJANGO_SETTINGS) --pythonpath $(PYTHONPATH)
 django-command = django-admin $(1) $(2) --settings $(DJANGO_SETTINGS) --pythonpath $(PYTHONPATH)
